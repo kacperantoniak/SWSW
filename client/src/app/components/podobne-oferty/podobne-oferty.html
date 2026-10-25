@@ -1,0 +1,40 @@
+<div class="podobne-oferty-container">
+  <h3>Brak dokładnej konfiguracji - podobne oferty</h3>
+  <p>Nie znaleziono kołowrotka z żyłką o żądanej grubości. Wybierz alternatywę:</p>
+
+  <div class="kolumny">
+    <div class="kolumna">
+      <h4>Ten sam kołowrotek, inna żyłka</h4>
+      <mat-card *ngFor="let oferta of ofertyTenSamKolowrotek" class="oferta-karta">
+        <mat-card-content>
+          <p><strong>{{oferta.kolowrotek?.producent}} {{oferta.kolowrotek?.model}}</strong></p>
+          <p>Żyłka: {{oferta.zylka?.grubosc}} mm ({{oferta.zylka?.material}})</p>
+          <p class="cena">{{oferta.cenaZaGodzineWypozyczenia}} zł/h</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="wybierz(oferta)">Wybierz</button>
+        </mat-card-actions>
+      </mat-card>
+      <p *ngIf="ofertyTenSamKolowrotek.length === 0" class="brak-ofert">Brak ofert w tej kategorii.</p>
+    </div>
+
+    <div class="kolumna">
+      <h4>Ta sama żyłka, inny kołowrotek</h4>
+      <mat-card *ngFor="let oferta of ofertyTaSamaZylka" class="oferta-karta">
+        <mat-card-content>
+          <p><strong>{{oferta.kolowrotek?.producent}} {{oferta.kolowrotek?.model}}</strong></p>
+          <p>Żyłka: {{oferta.zylka?.grubosc}} mm ({{oferta.zylka?.material}})</p>
+          <p class="cena">{{oferta.cenaZaGodzineWypozyczenia}} zł/h</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="wybierz(oferta)">Wybierz</button>
+        </mat-card-actions>
+      </mat-card>
+      <p *ngIf="ofertyTaSamaZylka.length === 0" class="brak-ofert">Brak ofert w tej kategorii.</p>
+    </div>
+  </div>
+
+  <div class="akcje">
+    <button mat-button (click)="anuluj()">Anuluj (bez kołowrotka)</button>
+  </div>
+</div>

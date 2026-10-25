@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>Nowy klient</h2>
+<mat-dialog-content>
+  <form [formGroup]="klientForm" class="dialog-form">
+    <p></p>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Imię *</mat-label>
+      <input matInput formControlName="imie">
+      <mat-error *ngIf="klientForm.get('imie')?.hasError('required')">Imię jest wymagane</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nazwisko *</mat-label>
+      <input matInput formControlName="nazwisko">
+      <mat-error *ngIf="klientForm.get('nazwisko')?.hasError('required')">Nazwisko jest wymagane</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Telefon</mat-label>
+      <input matInput formControlName="telefon">
+      <mat-error *ngIf="klientForm.get('telefon')?.hasError('pattern')">Nieprawidłowy numer telefonu</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email *</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="klientForm.get('email')?.hasError('email')">Nieprawidłowy email</mat-error>
+    </mat-form-field>
+
+    <h4>Adres</h4>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Ulica</mat-label>
+      <input matInput formControlName="ulica">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Miasto</mat-label>
+      <input matInput formControlName="miasto">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Kod pocztowy</mat-label>
+      <input matInput formControlName="kodPocztowy">
+      <mat-error *ngIf="klientForm.get('kodPocztowy')?.hasError('pattern')">Nieprawidłowy format (xx-xxx)</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="klientForm.invalid">
+    Zapisz
+  </button>
+</mat-dialog-actions>

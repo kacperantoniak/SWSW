@@ -1,0 +1,57 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.section {
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kwota {
+  text-align: right;
+  font-size: 1.1em;
+  margin-top: 12px;
+}
+
+.akcje {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-aktywne { background-color: #1976d2 !important; color: white !important; }
+.status-zamkniete { background-color: #388e3c !important; color: white !important; }
+.status-zarezerwowane { background-color: #fbc02d !important; color: #333 !important; }
+.status-anulowane { background-color: #d32f2f !important; color: white !important; }
+.status-zwrocone { background-color: #f57c00 !important; color: white !important; }
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: #888;
+}
+
+.back-button {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+}
+
+.status-text {
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}

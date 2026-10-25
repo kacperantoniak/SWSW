@@ -1,0 +1,192 @@
+<div class="container">
+  <h2>Nowe wypożyczenie</h2>
+
+  <mat-stepper [linear]="true" #stepper>
+
+    <mat-step *ngIf="!klientZablokowany" [stepControl]="klientForm">
+      <form [formGroup]="klientForm">
+        <ng-template matStepLabel>Wybierz klienta</ng-template>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Wyszukaj klienta</mat-label>
+          <input matInput [matAutocomplete]="auto" formControlName="klientSearch">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayKlient"
+            (optionSelected)="onKlientSelected($event.option.value)">
+            <mat-option *ngFor="let klient of filteredKlienci" [value]="klient">
+              {{klient.imie}} {{klient.nazwisko}} ({{klient.telefon}})
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <button mat-button type="button" (click)="nowyKlient()">
+          Zarejestruj nowego klienta
+        </button>
+
+        <div *ngIf="selectedClient" class="client-card">
+          <mat-card>
+            <mat-card-content>
+              <p><strong>{{selectedClient.imie}} {{selectedClient.nazwisko}}</strong></p>
+              <p>{{selectedClient.telefon}} | {{selectedClient.email}}</p>
+              <p>{{selectedClient.adres?.ulica}}, {{selectedClient.adres?.miasto}}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="action-buttons">
+          <button mat-button type="button" (click)="anuluj()">Anuluj</button>
+          <button mat-button matStepperNext [disabled]="!selectedClient">Dalej</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step [stepControl]="terminForm">
+      <form [formGroup]="terminForm">
+        <ng-template matStepLabel>Wybierz termin</ng-template>
+
+        <div class="datetime-group">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Data rozpoczęcia</mat-label>
+            <input matInput [matDatepicker]="pickerOd" formControlName="dataOdDate" readonly>
+            <mat-datepicker-toggle matSuffix [for]="pickerOd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerOd></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="time-field">
+            <mat-label>Godzina</mat-label>
+            <input matInput type="time" formControlName="dataOdTime" step="3600" placeholder="GG:MM">
+          </mat-form-field>
+        </div>
+
+        <div class="datetime-group">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Data zakończenia</mat-label>
+            <input matInput [matDatepicker]="pickerDo" formControlName="dataDoDate" readonly>
+            <mat-datepicker-toggle matSuffix [for]="pickerDo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerDo></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="time-field">
+            <mat-label>Godzina</mat-label>
+            <input matInput type="time" formControlName="dataDoTime" step="3600" placeholder="GG:MM">
+          </mat-form-field>
+        </div>
+
+        <mat-error *ngIf="terminForm.hasError('dataPrzeszla')" class="full-width">
+          Data rozpoczęcia nie może być wcześniejsza niż bieżąca godzina.
+        </mat-error>
+        <mat-error *ngIf="terminForm.hasError('koniecPrzedPoczatkiem')" class="full-width">
+          Data zakończenia musi być późniejsza niż data rozpoczęcia.
+        </mat-error>
+
+        <div class="action-buttons">
+          <button mat-button type="button" (click)="anuluj()">Anuluj</button>
+          <div>
+            <button mat-button matStepperPrevious *ngIf="!klientZablokowany">Wstecz</button>
+            <button mat-button matStepperNext [disabled]="terminForm.invalid">Dalej</button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step [stepControl]="sprzetForm">
+      <form [formGroup]="sprzetForm">
+        <ng-template matStepLabel>Wybierz sprzęt</ng-template>
+
+        <mat-tab-group>
+          <mat-tab label="Wędki">
+            <mat-selection-list formControlName="sprzetIdsWedki">
+              <mat-list-option *ngFor="let w of wedki" [value]="w.id">
+                {{w.producent}} {{w.model}} ({{w.dlugosc}}m, {{w.cenaBazowaZaGodzine}} zł/h)
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-tab>
+
+          <mat-tab label="Szczytówki">
+            <mat-selection-list formControlName="sprzetIdsSzczytowki">
+              <mat-list-option *ngFor="let s of szczytowki" [value]="s.id">
+                {{s.producent}} {{s.model}} ({{s.dlugosc}}m, {{s.cenaBazowaZaGodzine}} zł/h)
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-tab>
+
+          <mat-tab label="Kołowrotki">
+            <mat-selection-list formControlName="sprzetIdsKolowrotki">
+              <mat-list-option *ngFor="let k of kolowrotki" [value]="k.id">
+                {{k.producent}} {{k.model}} (przeł. {{k.przelozka}}, żyłka {{k.zylka?.grubosc}}mm, {{k.cenaBazowaZaGodzine}} zł/h)
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-tab>
+        </mat-tab-group>
+
+        <div *ngIf="kolowrotekWybrany" class="zylka-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Żądana grubość żyłki (mm)</mat-label>
+            <input matInput type="number" formControlName="gruboscZylki" step="0.01">
+          </mat-form-field>
+        </div>
+
+        <div class="sprawdz-dostepnosc">
+          <button mat-button type="button" (click)="sprawdzDostepnosc()"
+            [disabled]="!kolowrotekWybrany || !sprzetForm.value.gruboscZylki">
+            Sprawdź dostępność
+          </button>
+        </div>
+
+        <app-podobne-oferty
+          *ngIf="pokazSugestie"
+          [oferty]="ofertyPodobne"
+          (ofertaWybrana)="zastapKolowrotek($event)"
+          (anulowano)="usunKolowrotek()">
+        </app-podobne-oferty>
+
+        <div class="action-buttons">
+          <button mat-button type="button" (click)="anuluj()">Anuluj</button>
+          <div>
+            <button mat-button matStepperPrevious>Wstecz</button>
+            <button mat-button matStepperNext [disabled]="sprzetForm.invalid || pokazSugestie">Dalej</button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <form [formGroup]="sprzetForm">
+        <ng-template matStepLabel>Podsumowanie</ng-template>
+
+        <mat-card>
+          <mat-card-content>
+            <p><strong>Klient:</strong> {{selectedClient?.imie}} {{selectedClient?.nazwisko}}</p>
+            <p><strong>Termin:</strong> {{terminForm.value.dataOdDate | date:'yyyy-MM-dd'}} {{terminForm.value.dataOdTime}} – {{terminForm.value.dataDoDate | date:'yyyy-MM-dd'}} {{terminForm.value.dataDoTime}}</p>
+
+            <h4>Wybrany sprzęt:</h4>
+            <mat-list>
+              <mat-list-item *ngFor="let pozycja of podsumowaniePozycji">
+                {{pozycja.nazwa}} – {{pozycja.cenaZaGodzine}} zł/h
+              </mat-list-item>
+            </mat-list>
+
+            <p><strong>Szacowana kwota:</strong> {{szacowanaKwota | number:'1.2-2'}} zł</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Metoda płatności</mat-label>
+          <mat-select formControlName="metodaPlatnosci">
+            <mat-option value="Gotówka">Gotówka</mat-option>
+            <mat-option value="Karta">Karta</mat-option>
+            <mat-option value="Przelew">Przelew</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="action-buttons">
+          <button mat-button type="button" (click)="anuluj()">Anuluj</button>
+          <div>
+            <button mat-button matStepperPrevious>Wstecz</button>
+            <button mat-raised-button color="primary" (click)="zlozZamowienie()">Zarejestruj płatność i zakończ</button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+  </mat-stepper>
+</div>

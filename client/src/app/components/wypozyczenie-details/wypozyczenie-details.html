@@ -1,0 +1,108 @@
+<div class="container">
+  <button mat-icon-button class="back-button" (click)="goBack()" aria-label="Powrót">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <h2>Szczegóły wypożyczenia #{{wypozyczenie?.id}}</h2>
+
+  <div *ngIf="!wypozyczenie && !errorMessage" class="loading">
+    <p>Ładowanie danych...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    <p>{{errorMessage}}</p>
+  </div>
+
+  <div *ngIf="wypozyczenie">
+    <mat-card class="section">
+      <mat-card-content>
+        <div class="info-row">
+          <div>
+            <p><strong>Klient:</strong> {{wypozyczenie.klient?.imie}} {{wypozyczenie.klient?.nazwisko}}</p>
+            <p>{{wypozyczenie.klient?.telefon}} | {{wypozyczenie.klient?.email}}</p>
+          </div>
+        <span [ngClass]="getStatusClass(wypozyczenie.status)" class="status-text">{{wypozyczenie.status}}</span>
+        </div>
+        <p><strong>Data rezerwacji:</strong> {{wypozyczenie.dataRezerwacji | date:'dd-MM-yyyy HH:mm'}}</p>
+        <p><strong>Termin:</strong> {{wypozyczenie.dataRozpoczecia | date:'dd-MM-yyyy HH:mm'}} - {{wypozyczenie.dataZakonczenia | date:'dd-MM-yyyy HH:mm'}}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section">
+      <mat-card-header>
+        <mat-card-title>Wypożyczony sprzęt</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="wypozyczenie.pozycje" class="full-width">
+          <ng-container matColumnDef="sprzet">
+            <th mat-header-cell *matHeaderCellDef>Sprzęt</th>
+            <td mat-cell *matCellDef="let p">{{p.sprzet?.producent}} {{p.sprzet?.model}}</td>
+          </ng-container>
+          <ng-container matColumnDef="typ">
+            <th mat-header-cell *matHeaderCellDef>Typ</th>
+            <td mat-cell *matCellDef="let p">{{getTypSprzetu(p)}}</td>
+          </ng-container>
+          <ng-container matColumnDef="ilosc">
+            <th mat-header-cell *matHeaderCellDef>Ilość</th>
+            <td mat-cell *matCellDef="let p">{{p.ilosc}}</td>
+          </ng-container>
+          <ng-container matColumnDef="cena">
+            <th mat-header-cell *matHeaderCellDef>Cena/h</th>
+            <td mat-cell *matCellDef="let p">{{p.cenaZaGodzine}} zł</td>
+          </ng-container>
+          <ng-container matColumnDef="koszt">
+            <th mat-header-cell *matHeaderCellDef>Koszt</th>
+            <td mat-cell *matCellDef="let p">{{p.cenaZaGodzine * godziny | number:'1.2-2'}} zł</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['sprzet','typ','ilosc','cena','koszt']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['sprzet','typ','ilosc','cena','koszt']"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section">
+      <mat-card-header>
+        <mat-card-title>Płatności</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="wypozyczenie.platnosci" class="full-width" *ngIf="wypozyczenie.platnosci.length > 0">
+          <ng-container matColumnDef="typ">
+            <th mat-header-cell *matHeaderCellDef>Typ</th>
+            <td mat-cell *matCellDef="let p">{{p.typ}}</td>
+          </ng-container>
+          <ng-container matColumnDef="kwota">
+            <th mat-header-cell *matHeaderCellDef>Kwota</th>
+            <td mat-cell *matCellDef="let p">{{p.kwota}} zł</td>
+          </ng-container>
+          <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef>Data</th>
+            <td mat-cell *matCellDef="let p">{{p.dataPlatnosci | date:'dd-MM-yyyy HH:mm'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="metoda">
+            <th mat-header-cell *matHeaderCellDef>Metoda</th>
+            <td mat-cell *matCellDef="let p">{{p.metoda}}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['typ','kwota','data','metoda']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['typ','kwota','data','metoda']"></tr>
+        </table>
+        <p *ngIf="wypozyczenie.platnosci.length === 0">Brak zarejestrowanych płatności.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section">
+      <mat-card-content>
+        <div class="akcje">
+          <button mat-raised-button color="primary" *ngIf="wypozyczenie.status === 'Zarezerwowane'"
+            (click)="zmienStatus('aktywuj')">Wydaj sprzęt</button>
+          <button mat-raised-button color="accent" *ngIf="wypozyczenie.status === 'Aktywne'"
+            (click)="zmienStatus('zwrot')">Odnotuj zwrot</button>
+          <button mat-raised-button color="primary" *ngIf="wypozyczenie.status === 'Zwrocone'"
+            (click)="zmienStatus('zamknij')">Zamknij wypożyczenie</button>
+          <button mat-raised-button color="warn" *ngIf="wypozyczenie.status === 'Zarezerwowane'"
+            (click)="zmienStatus('anuluj')">Anuluj</button>
+            <button mat-stroked-button *ngIf="wypozyczenie.status !== 'Zamkniete' && wypozyczenie.status !== 'Anulowane'" (click)="dodajPlatnosc()">Dodaj opłatę</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

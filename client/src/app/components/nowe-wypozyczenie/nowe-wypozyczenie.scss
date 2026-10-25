@@ -1,0 +1,50 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.client-card {
+  margin: 16px 0;
+}
+
+.zylka-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.sprawdz-dostepnosc {
+  margin: 16px 0;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.datetime-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .date-field {
+    flex: 2;
+  }
+  .time-field {
+    flex: 1;
+  }
+  .time-separator {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 4px;
+  }
+}

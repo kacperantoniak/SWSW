@@ -1,0 +1,120 @@
+.master-detail-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f5f5f5;
+
+  .left-panel {
+    width: 350px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    mat-list {
+      flex: 1;
+      overflow-y: auto;
+
+      mat-list-item {
+        cursor: pointer;
+        margin-bottom: 4px;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: #f0f0f0;
+        }
+
+        .client-item-content {
+          display: flex;
+          flex-direction: column;
+
+          .client-name {
+            font-weight: 500;
+          }
+
+          .client-code {
+            font-size: 0.85rem;
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+
+  .right-panel {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+
+    .no-client-selected {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #888;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+      }
+    }
+
+    .client-details {
+      .details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+
+        h3 {
+          margin: 0;
+        }
+      }
+
+      .no-rentals {
+        text-align: center;
+        color: #888;
+        padding: 48px;
+      }
+    }
+  }
+
+  .panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  }
+  .header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  }
+}
+
+.status-text {
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 0.9em;
+}
+
+.status-aktywne { background-color: #1976d2 !important; color: white !important; }
+.status-zamkniete { background-color: #388e3c !important; color: white !important; }
+.status-zarezerwowane { background-color: #fbc02d !important; color: #333 !important; }
+.status-anulowane { background-color: #d32f2f !important; color: white !important; }
+.status-zwrocone { background-color: #f57c00 !important; color: white !important; }
